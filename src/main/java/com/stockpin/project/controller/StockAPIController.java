@@ -7,6 +7,7 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.reactive.function.client.WebClient;
 
@@ -47,7 +48,7 @@ public class StockAPIController {
 			if(response != null) {
 				String accessToken = response.get("access_token");
 				String tokenType = response.get("token_type");
-				String expiresIn = response.get("expires_in");
+				int expiresIn = Integer.parseInt(response.get("expires_in"));
 				String acessTokenTokenExpired = response.get("acess_token_token_expired");
 				
 				result = TokenResponesDTO.builder()
@@ -64,9 +65,10 @@ public class StockAPIController {
 		
 		return result;
 	}
+	
 	@GetMapping("test1")
-	public TokenResponesDTO get() {
-		return tokenService.getApiToken();
+	public String get() {
+		return tokenService.getToken();
 	}
 	
 }
