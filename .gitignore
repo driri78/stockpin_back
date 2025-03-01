@@ -39,3 +39,6 @@ out/
 
 ### application ###
 application.yaml
+
+# xlsx
+data/excel/

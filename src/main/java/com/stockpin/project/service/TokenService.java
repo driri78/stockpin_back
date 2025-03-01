@@ -1,8 +1,5 @@
 package com.stockpin.project.service;
 
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
 import java.util.Map;
 
 import org.springframework.core.ParameterizedTypeReference;
@@ -63,11 +60,11 @@ public class TokenService {
 			
 			if(respones != null) {
 				result = TokenResponesDTO.builder()
-				.accessToken(accessToken)
-				.tokenType(tokenType)
-				.expiresIn(expiresIn)
-				.acessTokenTokenExpired(acessTokenTokenExpired)
-				.build();
+										 .accessToken(accessToken)
+										 .tokenType(tokenType)
+										 .expiresIn(expiresIn)
+										 .acessTokenTokenExpired(acessTokenTokenExpired)
+										 .build();
 			}
 		} catch(Exception e) {
 			e.printStackTrace();
@@ -81,6 +78,7 @@ public class TokenService {
 		ValueOperations<String, String> valueOperations = redisTemplate.opsForValue();
 		String token = valueOperations.get("access_token");
 		
+		
 		// 토큰 만료일 유효성 검사
 		if(token == null || isTokenExpired()) {
 			TokenResponesDTO tokenInfo = getApiToken();
@@ -89,7 +87,6 @@ public class TokenService {
 			valueOperations.set("expires_in", String.valueOf(tokenInfo.getExpiresIn()));
 			valueOperations.set("access_token_token_expired", String.valueOf(System.currentTimeMillis() + tokenInfo.getExpiresIn()));
 		}
-		
 		return token;
 	}
 	
