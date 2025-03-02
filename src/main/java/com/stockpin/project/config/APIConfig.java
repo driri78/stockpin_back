@@ -12,7 +12,6 @@ import lombok.Setter;
 @Setter
 @ConfigurationProperties(prefix = "api")
 public class APIConfig {
-
 	private String appkey;
 	private String appsecret;
 }
