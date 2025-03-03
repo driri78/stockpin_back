@@ -1,15 +1,17 @@
 package com.stockpin.project.service.component;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
-import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
-import org.springframework.web.reactive.function.client.WebClient;
 
-import com.stockpin.project.config.APIConfig;
-import com.stockpin.project.service.module.TokenService;
+import com.stockpin.project.dto.stock.StockInfo;
+import com.stockpin.project.dto.stock.TradeAmount;
+import com.stockpin.project.dto.stock.Volume;
+import com.stockpin.project.service.module.ExternalApiService;
+import com.stockpin.project.util.Fomatter;
 
 import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Mono;
@@ -17,40 +19,57 @@ import reactor.core.publisher.Mono;
 @Service
 @RequiredArgsConstructor
 public class StockService {
-
-	private final TokenService tokenService;
 	
-	private final APIConfig apiConfig;
+	/*seq 
+	 * 0 거래대금 
+	 * 1 거래량
+	 */
 	
-	public void setRequestHeader(HttpHeaders header, String token, String trId, String custType) {
-		header.set("content-type", "application/json; charset=utf-8");
-		header.set("authorization","Bearer " + token);
-		header.set("appkey", apiConfig.getAppkey());
-		header.set("appsecret", apiConfig.getAppsecret());
-		header.set("tr_id", trId);
-		header.set("custtype", custType);
+	private final ExternalApiService externalApiService;
+	
+	// 거래량 상위 100 
+	public Mono<List<StockInfo<Volume>>> getTopRankedByVolume(){
+		return externalApiService.getStockList("1").flatMap(response -> {
+			List<Map<String, String>> res = (List<Map<String, String>>) response.get("output2");
+			List<StockInfo<Volume>> result = res.stream()
+												.map(stockData -> {
+													Volume volume = new Volume();
+													volume.setAcmlVol(Fomatter.parseLong(stockData.get("acml_vol")));
+													
+													return StockInfo.<Volume>builder()
+																	.name(stockData.get("name"))
+																	.code(stockData.get("code"))
+																	.price(Fomatter.parseLong(stockData.get("price")))
+																	.chgRate(Fomatter.parseDouble(stockData.get("chgrate")))
+																	.data(volume)
+																	.build();
+												})
+												.collect(Collectors.toList());
+			return Mono.just(result);
+		});
 	}
 	
-	public Mono<Map<String, Object>> getStockData(String fidCondMarktDivCode, String fidInputIscd) {
-		return tokenService.getToken().flatMap(token ->{
-			String url = "https://openapi.koreainvestment.com:9443";
-			
-			WebClient webClient = WebClient.builder()
-										   .baseUrl(url)
-										   .build();
-			return webClient.get()
-					 .uri(uri -> uri.path("/uapi/domestic-stock/v1/quotations/inquire-price")
-					 		   	 	.queryParam("FID_COND_MRKT_DIV_CODE", fidCondMarktDivCode)
-					 		   	 	.queryParam("FID_INPUT_ISCD", fidInputIscd)
-					 		   	 	.build()
-					 )
-					 .headers(header -> {
-						 this.setRequestHeader(header, token, "FHKST01010100", "P");
-					 })
-					 .retrieve()
-					 .bodyToMono(new ParameterizedTypeReference<Map<String,Object>>(){})
-					 .onErrorResume(e -> Mono.error(new RuntimeException("ERR : getStockData")));
-			});
-	}
+	// 거래대금 상위 100
+    public Mono<List<StockInfo<TradeAmount>>> getTopRankedByTradeAmount(){
+    	return externalApiService.getStockList("0").flatMap(response -> {
+			List<Map<String, String>> res = (List<Map<String, String>>) response.get("output2");
+			List<StockInfo<TradeAmount>> result = res.stream()
+												.map(stockData -> {
+													TradeAmount tradeAmount = new TradeAmount();
+													tradeAmount.setTradeAmout(Fomatter.parseLong(stockData.get("trade_amt")));
+													
+													return StockInfo.<TradeAmount>builder()
+																	.name(stockData.get("name"))
+																	.code(stockData.get("code"))
+																	.price(Fomatter.parseLong(stockData.get("price")))
+																	.chgRate(Fomatter.parseDouble(stockData.get("chgrate")))
+																	.data(tradeAmount)
+																	.build();
+												})
+												.collect(Collectors.toList());
+			return Mono.just(result);
+		});
+    }
+	 
 	
 }
