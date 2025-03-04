@@ -21,15 +21,16 @@ import reactor.core.publisher.Mono;
 public class StockService {
 	
 	/*seq 
-	 * 0 거래대금 
-	 * 1 거래량
+	 * 0 연속상승주
+	 * 1 거래대금 
+	 * 2 거래량
 	 */
 	
 	private final ExternalApiService externalApiService;
 	
 	// 거래량 상위 100 
 	public Mono<List<StockInfo<Volume>>> getTopRankedByVolume(){
-		return externalApiService.getStockList("1").flatMap(response -> {
+		return externalApiService.getStockList("2").flatMap(response -> {
 			List<Map<String, String>> res = (List<Map<String, String>>) response.get("output2");
 			List<StockInfo<Volume>> result = res.stream()
 												.map(stockData -> {
@@ -51,7 +52,7 @@ public class StockService {
 	
 	// 거래대금 상위 100
     public Mono<List<StockInfo<TradeAmount>>> getTopRankedByTradeAmount(){
-    	return externalApiService.getStockList("0").flatMap(response -> {
+    	return externalApiService.getStockList("1").flatMap(response -> {
 			List<Map<String, String>> res = (List<Map<String, String>>) response.get("output2");
 			List<StockInfo<TradeAmount>> result = res.stream()
 												.map(stockData -> {

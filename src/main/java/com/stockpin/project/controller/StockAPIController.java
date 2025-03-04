@@ -46,6 +46,11 @@ public class StockAPIController {
 		return externalApiService.getStock("J", code, period);
 	}
 
+	@GetMapping("list1")
+	public Mono<Map<String, Object>> getStockList1() {
+		return externalApiService.getStockList("0");
+	}
+	
 	@GetMapping("criteria")
 	public Mono<Map<String, Object>> getStockCriteriaList() {
 		return externalApiService.getCriteriaList();
@@ -60,12 +65,6 @@ public class StockAPIController {
 	public Mono<List<StockInfo<TradeAmount>>> getStocksRankedByTradeAmount() {
 		return stockService.getTopRankedByTradeAmount();
 	}
-	
-	@GetMapping("list1")
-	public Mono<Map<String, Object>> getStockList1() {
-		return externalApiService.getStockList("0");
-	}
-	
 	
 	
 }
