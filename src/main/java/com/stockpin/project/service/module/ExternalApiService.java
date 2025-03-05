@@ -82,8 +82,6 @@ public class ExternalApiService {
 			});
 	}
 	
-	
-	
 	public Mono<Map<String, Object>> getCriteriaList() {
 		String userId = apiConfig.getUserId();
 		String trId = "HHKST03900300";

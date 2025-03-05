@@ -5,6 +5,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class Volume {
+public class Screener {
+	private long stotPrice;
 	private long acmlVol;
 }

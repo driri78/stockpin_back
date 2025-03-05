@@ -4,13 +4,15 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.stockpin.project.dto.stock.StockInfo;
+import com.stockpin.project.dto.stock.Screener;
 import com.stockpin.project.dto.stock.TradeAmount;
 import com.stockpin.project.dto.stock.Volume;
+import com.stockpin.project.dto.stock.basic.StockInfo;
 import com.stockpin.project.service.GetExcelDataService;
 import com.stockpin.project.service.component.StockService;
 import com.stockpin.project.service.module.ExternalApiService;
@@ -66,5 +68,9 @@ public class StockAPIController {
 		return stockService.getTopRankedByTradeAmount();
 	}
 	
+	@GetMapping("screener/{idx}")
+	public Mono<List<StockInfo<Screener>>> getFilterStocks(@PathVariable("idx")String idx) {
+		return stockService.getScreenerStock(idx);
+	}
 	
 }

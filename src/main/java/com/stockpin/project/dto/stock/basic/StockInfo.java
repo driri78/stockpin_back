@@ -1,4 +1,4 @@
-package com.stockpin.project.dto.stock;
+package com.stockpin.project.dto.stock.basic;
 
 import lombok.Builder;
 import lombok.Getter;
