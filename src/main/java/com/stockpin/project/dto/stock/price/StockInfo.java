@@ -1,4 +1,4 @@
-package com.stockpin.project.dto.stock.basic;
+package com.stockpin.project.dto.stock.price;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -6,10 +6,10 @@ import lombok.Getter;
 @Getter
 public class StockInfo<T> {
 	private T data;
-	private String name;
-	private String code;
-	private long price;
-	private double chgRate;
+	private String name; // 종목명
+	private String code; // 종목 코드
+	private long price; // 주가
+	private double chgRate; // 등락률
 	
 	@Builder
 	public StockInfo(T data, String name, String code, long price, double chgRate) {

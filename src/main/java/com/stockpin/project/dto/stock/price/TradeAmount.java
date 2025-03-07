@@ -1,11 +1,11 @@
-package com.stockpin.project.dto.stock;
+package com.stockpin.project.dto.stock.price;
 
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 public class TradeAmount {
-	private long tradeAmout;
+	private long tradeAmout; // 거래대금
 
 	public void setTradeAmout(long tradeAmout) {
 		this.tradeAmout = tradeAmout * 1000;
