@@ -5,6 +5,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class Volume {
+public class ScreenerDTO {
+	private long stotPrice; // 시가총액
 	private long acmlVol; // 거래량
 }

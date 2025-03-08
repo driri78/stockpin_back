@@ -16,19 +16,6 @@ public class QuoteDaily {
 	private String stckHgpr; // 고가
 	private String stckLwpr; // 저가
 	
-	@Builder
-	public QuoteDaily(String stckBsopDate, String stckClpr, String chgRate, String acmlVol, String acmlTrPbmn,
-			String stckOprc, String stckHgpr, String stckLwpr) {
-		this.stckBsopDate = stckBsopDate;
-		this.stckClpr = stckClpr;
-		this.chgRate = chgRate;
-		this.acmlVol = acmlVol;
-		this.acmlTrPbmn = acmlTrPbmn;
-		this.stckOprc = stckOprc;
-		this.stckHgpr = stckHgpr;
-		this.stckLwpr = stckLwpr;
-	}
-	
 	public QuoteDaily(Map<String, String> stockData) {
 		this.stckBsopDate = stockData.get("stck_bsop_date");
 		this.stckClpr = stockData.get("stck_clpr");

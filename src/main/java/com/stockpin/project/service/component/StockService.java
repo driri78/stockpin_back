@@ -7,11 +7,12 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 
 import com.stockpin.project.dto.detail.QuoteDaily;
-import com.stockpin.project.dto.stock.price.Screener;
-import com.stockpin.project.dto.stock.price.StockInfo;
-import com.stockpin.project.dto.stock.price.TradeAmount;
-import com.stockpin.project.dto.stock.price.Volume;
-import com.stockpin.project.service.module.ExternalPriceApiService;
+import com.stockpin.project.dto.stock.info.StockInfoDTO;
+import com.stockpin.project.dto.stock.price.ScreenerDTO;
+import com.stockpin.project.dto.stock.price.StockPriceDTO;
+import com.stockpin.project.dto.stock.price.TradeAmountDTO;
+import com.stockpin.project.dto.stock.price.VolumeDTO;
+import com.stockpin.project.service.module.ExternalApiService;
 import com.stockpin.project.util.Converter;
 import com.stockpin.project.util.Fomatter;
 
@@ -20,8 +21,8 @@ import reactor.core.publisher.Mono;
 
 @Service
 @RequiredArgsConstructor
-public class StockPriceService {
-	private final ExternalPriceApiService externalPriceApiService;
+public class StockService {
+	private final ExternalApiService externalApiService;
 	
 	/*seq 
       0 : "거래대금 상위100"
@@ -35,15 +36,15 @@ public class StockPriceService {
 	 */
 	
 	// 거래대금 상위 100 => 홈
-    public Mono<List<StockInfo<TradeAmount>>> getTopRankedByTradeAmount(){
-    	return externalPriceApiService.getStockList("0").flatMap(response -> {
+    public Mono<List<StockPriceDTO<TradeAmountDTO>>> getTopRankedByTradeAmount(){
+    	return externalApiService.getStockList("0").flatMap(response -> {
 			List<Map<String, String>> stockList = Converter.convertTolistOfMap(response.get("output2"));
-			List<StockInfo<TradeAmount>> result = stockList.stream()
+			List<StockPriceDTO<TradeAmountDTO>> result = stockList.stream()
 														 .map(stockData -> {
-															 TradeAmount tradeAmount = new TradeAmount();
+															 TradeAmountDTO tradeAmount = new TradeAmountDTO();
 															 tradeAmount.setTradeAmout(Fomatter.parseLong(stockData.get("trade_amt")));
 															
-															 return StockInfo.<TradeAmount>builder()
+															 return StockPriceDTO.<TradeAmountDTO>builder()
 																			 .name(stockData.get("name"))
 																			 .code(stockData.get("code"))
 																			 .price(Fomatter.parseLong(stockData.get("price")))
@@ -57,15 +58,15 @@ public class StockPriceService {
     }
 	
 	// 거래량 상위 100 => 홈
-	public Mono<List<StockInfo<Volume>>> getTopRankedByVolume(){
-		return externalPriceApiService.getStockList("1").flatMap(response -> {
+	public Mono<List<StockPriceDTO<VolumeDTO>>> getTopRankedByVolume(){
+		return externalApiService.getStockList("1").flatMap(response -> {
 			List<Map<String, String>> stockList = Converter.convertTolistOfMap(response.get("output2"));
-			List<StockInfo<Volume>> result = stockList.stream()
+			List<StockPriceDTO<VolumeDTO>> result = stockList.stream()
 													.map(stockData -> {
-														Volume volume = new Volume();
+														VolumeDTO volume = new VolumeDTO();
 														volume.setAcmlVol(Fomatter.parseLong(stockData.get("acml_vol")));
 														
-														return StockInfo.<Volume>builder()
+														return StockPriceDTO.<VolumeDTO>builder()
 																		.name(stockData.get("name"))
 																		.code(stockData.get("code"))
 																		.price(Fomatter.parseLong(stockData.get("price")))
@@ -79,19 +80,19 @@ public class StockPriceService {
 	}
 	
 	// Screener StockList => 주식모아보기
-	public Mono<List<StockInfo<Screener>>> getScreenerStock(String idx){
+	public Mono<List<StockPriceDTO<ScreenerDTO>>> getScreenerStock(String idx){
 		if(Fomatter.parseInt(idx) < 2 || Fomatter.parseInt(idx) > 8) {
 			throw new RuntimeException("잘못된 idx값입니다...");
 		}
-		return externalPriceApiService.getStockList(idx).flatMap(response -> {
+		return externalApiService.getStockList(idx).flatMap(response -> {
 			List<Map<String, String>> stockList = Converter.convertTolistOfMap(response.get("output2"));
-			List<StockInfo<Screener>> result = stockList.stream()
+			List<StockPriceDTO<ScreenerDTO>> result = stockList.stream()
 													  .map(stockData -> {
-														  Screener filterInfo = new Screener();
+														  ScreenerDTO filterInfo = new ScreenerDTO();
 														  filterInfo.setAcmlVol(Fomatter.parseLong(stockData.get("acml_vol")));
 														  filterInfo.setStotPrice(Fomatter.parseLong(stockData.get("stotprice")));
 														
-														  return StockInfo.<Screener>builder()
+														  return StockPriceDTO.<ScreenerDTO>builder()
 																		  .name(stockData.get("name"))
 																		  .code(stockData.get("code"))
 																		  .price(Fomatter.parseLong(stockData.get("price")))
@@ -106,7 +107,7 @@ public class StockPriceService {
 	
 	// detail 시세
 	public Mono<List<QuoteDaily>> getStockQuote(String startDate, String endDate, String period){
-		return externalPriceApiService.getQuote(startDate, endDate, period).flatMap(response -> {
+		return externalApiService.getQuote(startDate, endDate, period).flatMap(response -> {
 			List<Map<String, String>> stockList = Converter.convertTolistOfMap(response.get("output2"));
 			List<QuoteDaily> result = stockList.stream()
 											   .map(stockData -> {
@@ -115,6 +116,25 @@ public class StockPriceService {
 											   })
 											   .collect(Collectors.toList());
 			return Mono.just(result);
+		});
+	}
+	
+	// detail 종목정보
+//	300: 주식, ETF, ETN, ELW
+//	301 : 선물옵션
+//	302 : 채권
+//	306 : ELS'
+
+//	cpta": "778046685000", 자본금
+//	 "scts_mket_lstg_dt": "19750611", 상장일
+//	"lstg_stqt": "5919637922", 상장주 수
+//    "prdt_eng_name120": "SamsungElectronics",
+//	"std_idst_clsf_cd_name": "통신 및 방송 장비 제조업",
+//    "idx_bztp_mcls_cd_name": "전기,전자",
+	public Mono<StockInfoDTO> getStockInfo(String typeCode, String code){
+		return externalApiService.getInfo(typeCode, code).flatMap(response -> {
+			Map<String, String> stockData = (Map<String, String>)response.get("output");
+			return Mono.just(new StockInfoDTO(stockData));
 		});
 	}
 }

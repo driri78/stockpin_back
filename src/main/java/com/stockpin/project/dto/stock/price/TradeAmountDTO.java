@@ -4,7 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Getter
-public class TradeAmount {
+public class TradeAmountDTO {
 	private long tradeAmout; // 거래대금
 
 	public void setTradeAmout(long tradeAmout) {
