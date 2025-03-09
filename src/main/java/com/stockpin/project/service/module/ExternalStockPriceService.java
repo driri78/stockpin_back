@@ -3,10 +3,8 @@ package com.stockpin.project.service.module;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Map;
-import java.util.function.Consumer;
 
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
@@ -18,11 +16,11 @@ import reactor.core.publisher.Mono;
 
 @Service
 @RequiredArgsConstructor
-public class ExternalApiService {
-	private final TokenService tokenService;
-	private final APIConfig apiConfig;
+public class ExternalStockPriceService {
 	
-	String URL = "https://openapi.koreainvestment.com:9443";
+	private final TokenService tokenService;
+	
+	private final APIConfig apiConfig;
 	
 	// 기본시세 => 주식현재가 일자별
 	public Mono<Map<String, Object>> getStock(String marketCode, String stockCode, String period) {
@@ -30,7 +28,7 @@ public class ExternalApiService {
 		
 		return tokenService.getToken().flatMap(token ->{
 			WebClient webClient = WebClient.builder()
-										   .baseUrl(URL)
+										   .baseUrl(apiConfig.getUrl())
 										   .build();
 			return webClient.get()
 						    .uri(uri -> uri.path("/uapi/domestic-stock/v1/quotations/inquire-daily-price")
@@ -43,7 +41,7 @@ public class ExternalApiService {
 						    .headers(header -> ServiceUtility.setRequestHeader(header, token, trId, apiConfig))
 						    .retrieve()
 						    .bodyToMono(new ParameterizedTypeReference<Map<String,Object>>(){})
-						    .onErrorResume(e -> Mono.error(new RuntimeException("ERR : getStock(period)")));
+						    .onErrorResume(err -> Mono.error(new RuntimeException("ERR : ExternalStockPriceService => getStock()\n" + err)));
 			});
 	}
 	
@@ -54,7 +52,7 @@ public class ExternalApiService {
 		
 		return tokenService.getToken().flatMap(token ->{
 			WebClient webClient = WebClient.builder()
-										   .baseUrl(URL)
+										   .baseUrl(apiConfig.getUrl())
 										   .build();
 			return webClient.get()
 					 .uri(uri -> uri.path("/uapi/domestic-stock/v1/quotations/psearch-title")
@@ -64,7 +62,7 @@ public class ExternalApiService {
 					 .headers(header -> ServiceUtility.setRequestHeader(header, token, trId, apiConfig))
 					 .retrieve()
 					 .bodyToMono(new ParameterizedTypeReference<Map<String,Object>>(){})
-					 .onErrorResume(e -> Mono.error(new RuntimeException("ERR : getCriteriaList")));
+					 .onErrorResume(err -> Mono.error(new RuntimeException("ERR : ExternalStockPriceService => getCriteriaList\n" + err)));
 			});
 		
 	}
@@ -76,7 +74,7 @@ public class ExternalApiService {
 		
 		return tokenService.getToken().flatMap(token ->{
 			WebClient webClient = WebClient.builder()
-										   .baseUrl(URL)
+										   .baseUrl(apiConfig.getUrl())
 										   .build();
 			return webClient.get()
 						 .uri(uri -> uri.path("/uapi/domestic-stock/v1/quotations/psearch-result")
@@ -87,7 +85,7 @@ public class ExternalApiService {
 						 .headers(header -> ServiceUtility.setRequestHeader(header, token, trId, apiConfig))
 						 .retrieve()
 						 .bodyToMono(new ParameterizedTypeReference<Map<String,Object>>(){})
-						 .onErrorResume(e -> Mono.error(new RuntimeException("ERR : getStockList")));
+						 .onErrorResume(err -> Mono.error(new RuntimeException("ERR : ExternalStockPriceService => getStockList\n" + err)));
 			});
 	}
 	
@@ -97,7 +95,7 @@ public class ExternalApiService {
 		
 		return tokenService.getToken().flatMap(token -> {
 			WebClient webClient = WebClient.builder()
-										   .baseUrl(URL)
+										   .baseUrl(apiConfig.getUrl())
 										   .build();
 			return webClient.get()
 					 		.uri(uri -> uri.path("/uapi/domestic-stock/v1/quotations/inquire-time-itemchartprice")
@@ -110,7 +108,8 @@ public class ExternalApiService {
 				 			)
 					 		.headers(header -> ServiceUtility.setRequestHeader(header, token, trId, apiConfig))
 							.retrieve()
-							.bodyToMono(new ParameterizedTypeReference<Map<String,Object>>(){});
+							.bodyToMono(new ParameterizedTypeReference<Map<String,Object>>(){})
+							.onErrorResume(err -> Mono.error(new RuntimeException("ERR : ExternalStockPriceService => getMinuteCandlestick\n" + err)));
 		});
 		
 	}
@@ -122,7 +121,7 @@ public class ExternalApiService {
 		
 		return tokenService.getToken().flatMap(token -> {
 			WebClient webClient = WebClient.builder()
-										   .baseUrl(URL)
+										   .baseUrl(apiConfig.getUrl())
 										   .build();
 			return webClient.get()
 					 		.uri(uri -> uri.path("/uapi/domestic-stock/v1/quotations/inquire-time-dailychartprice")
@@ -136,52 +135,9 @@ public class ExternalApiService {
 				 			)
 					 		.headers(header -> ServiceUtility.setRequestHeader(header, token, trId, apiConfig))
 							.retrieve()
-							.bodyToMono(new ParameterizedTypeReference<Map<String,Object>>(){});
+							.bodyToMono(new ParameterizedTypeReference<Map<String,Object>>(){})
+							.onErrorResume(err -> Mono.error(new RuntimeException("ERR : ExternalStockPriceService => getQuote\n" + err)));
 		});
 		
 	}
-	// -------------------------------------------------------------------------------------
-	// 기본시세 => 주식현재가 시세(아직 안쓰이는 메서드)
-		public Mono<Map<String, Object>> getStock(String marketCode, String stockCode) {
-			String trId = "FHKST01010100";
-			
-			return tokenService.getToken().flatMap(token ->{
-				WebClient webClient = WebClient.builder()
-											   .baseUrl(URL)
-											   .build();
-				return webClient.get()
-							    .uri(uri -> uri.path("/uapi/domestic-stock/v1/quotations/inquire-price")
-							 		   	 	.queryParam("FID_COND_MRKT_DIV_CODE", marketCode)
-							 		   	 	.queryParam("FID_INPUT_ISCD", stockCode)
-							 		   	 	.build()
-							    )
-							    .headers(header -> ServiceUtility.setRequestHeader(header, token, trId, apiConfig))
-							    .retrieve()
-							    .bodyToMono(new ParameterizedTypeReference<Map<String,Object>>(){})
-							    .onErrorResume(e -> Mono.error(new RuntimeException("ERR : getStock")));
-				});
-		}
-	
-	// 종목정보 => 주식기본조회
-	public Mono<Map<String,Object>> getInfo(String typeCode, String code){
-		String trId = "CTPF1002R";
-		
-		return tokenService.getToken().flatMap(token -> {
-			WebClient webClient = WebClient.builder()
-										   .baseUrl(URL)
-										   .build();
-			return webClient.get()
-							.uri(uri -> uri.path("/uapi/domestic-stock/v1/quotations/search-stock-info")
-									       .queryParam("PRDT_TYPE_CD", typeCode)
-										   .queryParam("PDNO", code)
-										   .build()
-						    )
-				     		.headers(header->ServiceUtility.setRequestHeader(header, token, trId, apiConfig))
-				     		.retrieve()
-				     		.bodyToMono(new ParameterizedTypeReference<Map<String, Object>>() {});
-			
-		});
-		
-	}
-	
 }

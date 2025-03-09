@@ -15,4 +15,5 @@ public class APIConfig {
 	private String appkey;
 	private String appsecret;
 	private String userId;
+	private String url;
 }

@@ -8,8 +8,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.stockpin.project.dto.stock.info.StockInfoDTO;
 import com.stockpin.project.service.GetExcelDataService;
-import com.stockpin.project.service.component.StockService;
-import com.stockpin.project.service.module.ExternalApiService;
+import com.stockpin.project.service.component.StockInfoService;
+import com.stockpin.project.service.component.StockPriceService;
+import com.stockpin.project.service.module.ExternalStockPriceService;
 import com.stockpin.project.service.module.TokenService;
 
 import lombok.RequiredArgsConstructor;
@@ -24,13 +25,13 @@ public class StockInfoAPIController {
 	
 	private final GetExcelDataService getExcelDataService;
 	
-	private final ExternalApiService externalApiService;
+	private final ExternalStockPriceService externalApiService;
 	
-	private final StockService stockService;
+	private final StockInfoService stockInfoService;
 	
 	@GetMapping("test")
 	public Mono<StockInfoDTO> getStockDetail1() {
-		return stockService.getStockInfo("300","005930");
+		return stockInfoService.getStockInfo("300","005930");
 	}
 	
 	// ------------------------------------------------------------------------------------
@@ -38,7 +39,7 @@ public class StockInfoAPIController {
 	// 주식 상세보기 => 종목 정보
 	@GetMapping("info")
 	public Mono<StockInfoDTO> getStockDetailInfo() {
-		return stockService.getStockInfo("300","005930");
+		return stockInfoService.getStockInfo("300","005930");
 	}
 	
 }

@@ -6,7 +6,7 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-public class RealTimeExternalApiService {
+public class RealTimeExternalService {
 
 	private final TokenService tokenService;
 	

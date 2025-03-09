@@ -16,8 +16,8 @@ import com.stockpin.project.dto.stock.price.ScreenerDTO;
 import com.stockpin.project.dto.stock.price.StockPriceDTO;
 import com.stockpin.project.dto.stock.price.TradeAmountDTO;
 import com.stockpin.project.dto.stock.price.VolumeDTO;
-import com.stockpin.project.service.component.StockService;
-import com.stockpin.project.service.module.ExternalApiService;
+import com.stockpin.project.service.component.StockPriceService;
+import com.stockpin.project.service.module.ExternalStockPriceService;
 
 import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Mono;
@@ -27,15 +27,11 @@ import reactor.core.publisher.Mono;
 @RequestMapping("/api/stock/price")
 public class StockPriceAPIController {
 
-	private final StockService stockService;
+	private final StockPriceService stockPriceService;
 	
-	private final ExternalApiService externalApiService;
+	private final ExternalStockPriceService externalApiService;
 	
 	@GetMapping("test")
-	public Mono<StockInfoDTO> getStockDetail1() {
-		return stockService.getStockInfo("300","005930");
-	}
-	@GetMapping("criteria")
 	public Mono<Map<String, Object>> getStockCriteriaList() {
 		return externalApiService.getCriteriaList();
 	}
@@ -45,25 +41,25 @@ public class StockPriceAPIController {
 	// 홈 => 거래량 순위
 	@GetMapping("volume/top")
 	public Mono<List<StockPriceDTO<VolumeDTO>>> getStocksRankedByVolume() {
-		return stockService.getTopRankedByVolume();
+		return stockPriceService.getTopRankedByVolume();
 	}
 	
 	// 홈 => 거래대금 순위
 	@GetMapping("trade-amount/top")
 	public Mono<List<StockPriceDTO<TradeAmountDTO>>> getStocksRankedByTradeAmount() {
-		return stockService.getTopRankedByTradeAmount();
+		return stockPriceService.getTopRankedByTradeAmount();
 	}
 	
 	// 주식모아보기 => stockPin 추천필터
 	@GetMapping("screener/{idx}")
 	public Mono<List<StockPriceDTO<ScreenerDTO>>> getFilterStocks(@PathVariable("idx")String idx) {
-		return stockService.getScreenerStock(idx);
+		return stockPriceService.getScreenerStock(idx);
 	}
 	
 	// 주식상세보기 => 일별 시세
 	@GetMapping("quote/{period}")
 	public Mono<List<QuoteDaily>> getStocksQuoteDaily(@PathVariable("period")String period){
-		return stockService.getStockQuote(String.valueOf(LocalDateTime.now().minusDays(100).format(DateTimeFormatter.ofPattern("YYYYMMdd"))), 
+		return stockPriceService.getStockQuote(String.valueOf(LocalDateTime.now().minusDays(100).format(DateTimeFormatter.ofPattern("YYYYMMdd"))), 
 				  String.valueOf(LocalDateTime.now().format(DateTimeFormatter.ofPattern("YYYYMMdd"))), period);
 	}
 	

@@ -12,7 +12,7 @@ import com.stockpin.project.dto.stock.price.ScreenerDTO;
 import com.stockpin.project.dto.stock.price.StockPriceDTO;
 import com.stockpin.project.dto.stock.price.TradeAmountDTO;
 import com.stockpin.project.dto.stock.price.VolumeDTO;
-import com.stockpin.project.service.module.ExternalApiService;
+import com.stockpin.project.service.module.ExternalStockPriceService;
 import com.stockpin.project.util.Converter;
 import com.stockpin.project.util.Fomatter;
 
@@ -21,8 +21,8 @@ import reactor.core.publisher.Mono;
 
 @Service
 @RequiredArgsConstructor
-public class StockService {
-	private final ExternalApiService externalApiService;
+public class StockPriceService {
+	private final ExternalStockPriceService externalStockPriceService;
 	
 	/*seq 
       0 : "거래대금 상위100"
@@ -37,7 +37,7 @@ public class StockService {
 	
 	// 거래대금 상위 100 => 홈
     public Mono<List<StockPriceDTO<TradeAmountDTO>>> getTopRankedByTradeAmount(){
-    	return externalApiService.getStockList("0").flatMap(response -> {
+    	return externalStockPriceService.getStockList("0").flatMap(response -> {
 			List<Map<String, String>> stockList = Converter.convertTolistOfMap(response.get("output2"));
 			List<StockPriceDTO<TradeAmountDTO>> result = stockList.stream()
 														 .map(stockData -> {
@@ -59,7 +59,7 @@ public class StockService {
 	
 	// 거래량 상위 100 => 홈
 	public Mono<List<StockPriceDTO<VolumeDTO>>> getTopRankedByVolume(){
-		return externalApiService.getStockList("1").flatMap(response -> {
+		return externalStockPriceService.getStockList("1").flatMap(response -> {
 			List<Map<String, String>> stockList = Converter.convertTolistOfMap(response.get("output2"));
 			List<StockPriceDTO<VolumeDTO>> result = stockList.stream()
 													.map(stockData -> {
@@ -84,7 +84,7 @@ public class StockService {
 		if(Fomatter.parseInt(idx) < 2 || Fomatter.parseInt(idx) > 8) {
 			throw new RuntimeException("잘못된 idx값입니다...");
 		}
-		return externalApiService.getStockList(idx).flatMap(response -> {
+		return externalStockPriceService.getStockList(idx).flatMap(response -> {
 			List<Map<String, String>> stockList = Converter.convertTolistOfMap(response.get("output2"));
 			List<StockPriceDTO<ScreenerDTO>> result = stockList.stream()
 													  .map(stockData -> {
@@ -107,7 +107,7 @@ public class StockService {
 	
 	// detail 시세
 	public Mono<List<QuoteDaily>> getStockQuote(String startDate, String endDate, String period){
-		return externalApiService.getQuote(startDate, endDate, period).flatMap(response -> {
+		return externalStockPriceService.getQuote(startDate, endDate, period).flatMap(response -> {
 			List<Map<String, String>> stockList = Converter.convertTolistOfMap(response.get("output2"));
 			List<QuoteDaily> result = stockList.stream()
 											   .map(stockData -> {
@@ -116,25 +116,6 @@ public class StockService {
 											   })
 											   .collect(Collectors.toList());
 			return Mono.just(result);
-		});
-	}
-	
-	// detail 종목정보
-//	300: 주식, ETF, ETN, ELW
-//	301 : 선물옵션
-//	302 : 채권
-//	306 : ELS'
-
-//	cpta": "778046685000", 자본금
-//	 "scts_mket_lstg_dt": "19750611", 상장일
-//	"lstg_stqt": "5919637922", 상장주 수
-//    "prdt_eng_name120": "SamsungElectronics",
-//	"std_idst_clsf_cd_name": "통신 및 방송 장비 제조업",
-//    "idx_bztp_mcls_cd_name": "전기,전자",
-	public Mono<StockInfoDTO> getStockInfo(String typeCode, String code){
-		return externalApiService.getInfo(typeCode, code).flatMap(response -> {
-			Map<String, String> stockData = (Map<String, String>)response.get("output");
-			return Mono.just(new StockInfoDTO(stockData));
 		});
 	}
 }
