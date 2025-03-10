@@ -1,4 +1,4 @@
-package com.stockpin.project.dto.detail;
+package com.stockpin.project.dto.stock;
 
 import java.util.Map;
 

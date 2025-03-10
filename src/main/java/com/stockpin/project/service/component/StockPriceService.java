@@ -6,7 +6,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
-import com.stockpin.project.dto.detail.QuoteDaily;
+import com.stockpin.project.dto.stock.QuoteDaily;
 import com.stockpin.project.dto.stock.info.StockInfoDTO;
 import com.stockpin.project.dto.stock.price.ScreenerDTO;
 import com.stockpin.project.dto.stock.price.StockPriceDTO;
@@ -111,8 +111,7 @@ public class StockPriceService {
 			List<Map<String, String>> stockList = Converter.convertTolistOfMap(response.get("output2"));
 			List<QuoteDaily> result = stockList.stream()
 											   .map(stockData -> {
-												   QuoteDaily quoteDaily = new QuoteDaily(stockData);
-												   return quoteDaily;
+												   return new QuoteDaily(stockData);
 											   })
 											   .collect(Collectors.toList());
 			return Mono.just(result);

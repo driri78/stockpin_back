@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.stockpin.project.dto.detail.QuoteDaily;
+import com.stockpin.project.dto.stock.QuoteDaily;
 import com.stockpin.project.dto.stock.info.StockInfoDTO;
 import com.stockpin.project.dto.stock.price.ScreenerDTO;
 import com.stockpin.project.dto.stock.price.StockPriceDTO;

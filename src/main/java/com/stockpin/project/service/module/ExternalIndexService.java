@@ -20,26 +20,47 @@ public class ExternalIndexService {
 	
 	private final APIConfig apiConfig;
 	
-	public Mono<Map<String,Object>> getIndex(){
+	// 업종/기타 => 국내업종 현재지수
+	public Mono<Map<String,Object>> getIndexInfo(String indexCode){
 		String trId = "FHPUP02100000";
 		
 		return tokenService.getToken().flatMap(token -> {
 			WebClient webClient = WebClient.builder()
 										   .baseUrl(apiConfig.getUrl())
 										   .build();
-			
 			return webClient.get()
 							.uri(uri -> uri.path("/uapi/domestic-stock/v1/quotations/inquire-index-price")
 										   .queryParam("FID_COND_MRKT_DIV_CODE", "U")
-										   .queryParam("FID_INPUT_ISCD", "1001")
+										   .queryParam("FID_INPUT_ISCD", indexCode)
 										   .build()
 						    )
 							.headers(header -> ServiceUtility.setRequestHeader(header, token, trId, apiConfig))
 							.retrieve()
 							.bodyToMono(new ParameterizedTypeReference<Map<String,Object>>() {})
-							.onErrorResume(err -> Mono.error(new RuntimeException("ERR : getIndex\n" + err)));
+							.onErrorResume(err -> Mono.error(new RuntimeException("ERR : ExternalIndexService => getIndexInfo\n" + err)));
 		});
+	}
+	
+	// 업종/기타 => 국내업종 시간별지수(분)
+	public Mono<Map<String,Object>> getIndexPrice(String timeType ,String indexCode){
+		String trId = "FHPUP02110200";
 		
+		return tokenService.getToken().flatMap(token -> {
+			WebClient webClient = WebClient.builder()
+										   .baseUrl(apiConfig.getUrl())
+										   .build();
+			return webClient.get()
+							.uri(uri -> uri.path("/uapi/domestic-stock/v1/quotations/inquire-index-timeprice")
+										   .queryParam("FID_INPUT_HOUR_1", timeType)
+										   .queryParam("FID_COND_MRKT_DIV_CODE", "U")
+										   .queryParam("FID_INPUT_ISCD", indexCode)
+										   .build()
+						    )
+							.headers(header -> ServiceUtility.setRequestHeader(header, token, trId, apiConfig))
+							.retrieve()
+							.bodyToMono(new ParameterizedTypeReference<Map<String,Object>>() {})
+							.onErrorResume(err -> Mono.error(new RuntimeException("ERR : ExternalIndexService => getIndexData\n" + err)));
+		});
 	}
 	
 	
