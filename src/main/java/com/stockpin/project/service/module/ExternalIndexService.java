@@ -42,6 +42,7 @@ public class ExternalIndexService {
 	}
 	
 	// 업종/기타 => 국내업종 시간별지수(분)
+	// timeType = 60(1분), 300(5분)
 	public Mono<Map<String,Object>> getIndexPrice(String timeType ,String indexCode){
 		String trId = "FHPUP02110200";
 		
