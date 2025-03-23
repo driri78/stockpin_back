@@ -17,6 +17,6 @@ public class TradingAccount {
 	private LocalDateTime createAt;
 	
 	@OneToMany(mappedBy = "tradingAccount")
-	private List<TransactionHistory> transactionHistory;
+	private List<TransactionHistory> transactionHistoryList;
 	
 }
