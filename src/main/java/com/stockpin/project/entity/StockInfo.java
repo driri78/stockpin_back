@@ -17,4 +17,7 @@ public class StockInfo {
 	@OneToMany(mappedBy = "stockInfo")
 	private List<Comment> commentList;
 	
+	@OneToMany(mappedBy = "stockInfo")
+	private List<StockTradeHistory> stockTradeHistoryList;
+	
 }
