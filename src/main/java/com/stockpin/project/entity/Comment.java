@@ -1,6 +1,7 @@
 package com.stockpin.project.entity;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -8,6 +9,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,6 +17,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor
+// 댓글 테이블
 public class Comment {
 	
 	@Id
@@ -32,6 +35,9 @@ public class Comment {
 	@JoinColumn(name = "stock_code")
 	private StockInfo stockInfo;
 
+	@OneToMany(mappedBy = "comment")
+	private List<Reply> replyList;
+	
 	@Builder
 	public Comment(long id, String content, LocalDateTime createAt, LocalDateTime updateAt, 
 			User user, StockInfo stockInfo) {

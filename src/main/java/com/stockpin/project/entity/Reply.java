@@ -14,18 +14,20 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor
-// 거래내역 테이블
-public class TransactionHistory {
+// 대댓글 테이블
+public class Reply {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.SEQUENCE)
 	private long id;
-	private String amount;
-	private String transactionType;
-	private LocalDateTime createAt;
+	
+	private String content; // 댓글내용
+	private LocalDateTime createAt; // 생성일
+	private LocalDateTime updateAt; // 업데이트일
 	
 	@ManyToOne
-	@JoinColumn(name = "trading_account_id")
-	private TradingAccount tradingAccount;
+	@JoinColumn(name = "comment_id")
+	private Comment comment;
+	
 	
 }

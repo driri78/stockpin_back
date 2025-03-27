@@ -14,6 +14,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor
+// 계좌 테이블
 public class TradingAccount {
 
 	@Id

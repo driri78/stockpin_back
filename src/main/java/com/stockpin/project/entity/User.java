@@ -15,6 +15,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor
+// 유저 테이블
 public class User {
 
 	@Id

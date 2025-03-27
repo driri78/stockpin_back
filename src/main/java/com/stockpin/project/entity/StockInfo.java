@@ -13,15 +13,16 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor
+// 주식정보 테이블
 public class StockInfo {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.SEQUENCE)
-	private String code;
-	private String name;
-	private String marketType;
-	private String url;
-	private int count;
+	private String code; // 주식코드
+	private String name; // 주식이름
+	private String marketType; // 시장타입
+	private String url; // 홈페이지 url
+	private int tdyVwCnt; // 하루 조회수
 	
 	@OneToMany(mappedBy = "stockInfo")
 	private List<Comment> commentList;
