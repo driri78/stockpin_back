@@ -19,7 +19,7 @@ public class StockTradeHistory {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.SEQUENCE)
-	private long id;
+	private Long id;
 	private String transactionType;
 	private int quantity;
 	private int price;

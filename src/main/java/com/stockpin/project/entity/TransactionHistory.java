@@ -19,7 +19,7 @@ public class TransactionHistory {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.SEQUENCE)
-	private long id;
+	private Long id;
 	private String amount;
 	private String transactionType;
 	private LocalDateTime createAt;

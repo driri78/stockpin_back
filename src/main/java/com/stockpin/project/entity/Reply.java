@@ -19,7 +19,7 @@ public class Reply {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.SEQUENCE)
-	private long id;
+	private Long id;
 	
 	private String content; // 댓글내용
 	private LocalDateTime createAt; // 생성일

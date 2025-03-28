@@ -20,7 +20,7 @@ public class Community {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.SEQUENCE)
-	private long stockCode;
+	private Long stockCode;
 	
 	@MapsId
 	@OneToOne
