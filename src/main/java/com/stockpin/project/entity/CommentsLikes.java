@@ -15,19 +15,22 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor
-// 거래내역 테이블
-public class TransactionHistory {
-
+// 댓글 좋아요(대댓글 포함)
+public class CommentsLikes {
+	
 	@Id
-	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "transaction_history_seq")
-	@SequenceGenerator(name = "transaction_history_seq", sequenceName = "transaction_history_seq", allocationSize = 1)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "commentsLikes_seq")
+	@SequenceGenerator(name = "commentsLikes_seq", sequenceName = "commentsLikes_seq", allocationSize = 1)
 	private Long id;
-	private String amount;
-	private String transactionType;
+	
 	private LocalDateTime createAt;
 	
 	@ManyToOne
-	@JoinColumn(name = "trading_account_id")
-	private TradingAccount tradingAccount;
+	@JoinColumn(name = "comments_id")
+	private Comments comments;
+	
+	@ManyToOne
+	@JoinColumn(name = "reply_id")
+	private Reply reply;
 	
 }

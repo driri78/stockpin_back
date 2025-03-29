@@ -10,6 +10,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.SequenceGenerator;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,34 +19,38 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 // 댓글 테이블
-public class Comment {
+public class Comments {
 	
 	@Id
-	@GeneratedValue(strategy = GenerationType.SEQUENCE)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "comments_seq")
+	@SequenceGenerator(name = "comments_seq", sequenceName = "comments_seq", allocationSize = 1)
 	private Long id;
 	private String content;
 	private LocalDateTime createAt;
 	private LocalDateTime updateAt;
 	
 	@ManyToOne
-	@JoinColumn(name = "user_id")
-	private User user;
+	@JoinColumn(name = "member_id")
+	private Member member;
 	
 	@ManyToOne
 	@JoinColumn(name = "stock_code")
 	private StockInfo stockInfo;
 
-	@OneToMany(mappedBy = "comment")
+	@OneToMany(mappedBy = "comments")
 	private List<Reply> replyList;
 	
+	@OneToMany(mappedBy = "comments")
+	private List<CommentsLikes> commentsLikes;
+	
 	@Builder
-	public Comment(long id, String content, LocalDateTime createAt, LocalDateTime updateAt, 
-			User user, StockInfo stockInfo) {
+	public Comments(long id, String content, LocalDateTime createAt, LocalDateTime updateAt, 
+			Member member, StockInfo stockInfo) {
 		this.id = id;
 		this.content = content;
 		this.createAt = createAt;
 		this.updateAt = updateAt;
-		this.user = user;
+		this.member = member;
 		this.stockInfo = stockInfo;
 	}
 	

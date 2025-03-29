@@ -8,6 +8,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.SequenceGenerator;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -18,7 +19,8 @@ import lombok.NoArgsConstructor;
 public class StockTradeHistory {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.SEQUENCE)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "stock_trade_history_seq")
+	@SequenceGenerator(name = "stock_trade_history_seq", sequenceName = "stock_trade_history_seq", allocationSize = 1)
 	private Long id;
 	private String transactionType;
 	private int quantity;
@@ -27,8 +29,8 @@ public class StockTradeHistory {
 	private LocalDateTime createAt;
 	
 	@ManyToOne
-	@JoinColumn(name = "user_id")
-	private User user;
+	@JoinColumn(name = "member_id")
+	private Member member;
 	
 	@ManyToOne
 	@JoinColumn(name = "stock_code")

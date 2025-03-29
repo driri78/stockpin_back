@@ -8,6 +8,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.SequenceGenerator;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -18,7 +19,8 @@ import lombok.NoArgsConstructor;
 public class TradingAccount {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.SEQUENCE)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "trading_account_seq")
+	@SequenceGenerator(name = "trading_account_seq", sequenceName = "trading_account_seq", allocationSize = 1)
 	private Long id;
 	private String accountNumber;
 	private String pw;

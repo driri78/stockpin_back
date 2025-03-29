@@ -15,19 +15,22 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor
-// 거래내역 테이블
-public class TransactionHistory {
+// 관심주식 테이블
+public class StockLikes {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "transaction_history_seq")
-	@SequenceGenerator(name = "transaction_history_seq", sequenceName = "transaction_history_seq", allocationSize = 1)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "stock_likes_seq")
+	@SequenceGenerator(name = "stock_likes_seq", sequenceName = "stock_likes_seq", allocationSize = 1)
 	private Long id;
-	private String amount;
-	private String transactionType;
+	
 	private LocalDateTime createAt;
 	
 	@ManyToOne
-	@JoinColumn(name = "trading_account_id")
-	private TradingAccount tradingAccount;
+	@JoinColumn(name = "stock_code")
+	private StockInfo stockInfo;
 	
+	
+	@ManyToOne
+	@JoinColumn(name = "member_id")
+	private Member member;
 }

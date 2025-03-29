@@ -8,6 +8,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.SequenceGenerator;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -18,7 +19,8 @@ import lombok.NoArgsConstructor;
 public class Reply {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.SEQUENCE)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "reply_seq")
+	@SequenceGenerator(name = "reply_seq", sequenceName = "reply_seq", allocationSize = 1)
 	private Long id;
 	
 	private String content; // 댓글내용
@@ -26,8 +28,12 @@ public class Reply {
 	private LocalDateTime updateAt; // 업데이트일
 	
 	@ManyToOne
-	@JoinColumn(name = "comment_id")
-	private Comment comment;
+	@JoinColumn(name = "comments_id")
+	private Comments comments;
+	
+	@ManyToOne
+	@JoinColumn(name = "member_id")
+	private Member member;
 	
 	
 }

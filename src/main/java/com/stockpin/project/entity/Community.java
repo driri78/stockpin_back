@@ -7,6 +7,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.MapsId;
 import jakarta.persistence.OneToOne;
+import jakarta.persistence.SequenceGenerator;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -19,11 +20,12 @@ public class Community {
 	private long viewCnt;
 	
 	@Id
-	@GeneratedValue(strategy = GenerationType.SEQUENCE)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "community_seq")
+	@SequenceGenerator(name = "community_seq", sequenceName = "community_seq", allocationSize = 1)
 	private Long stockCode;
 	
 	@MapsId
-	@OneToOne
+	@OneToOne(mappedBy = "community")
 	@JoinColumn(name = "stock_code")
 	private StockInfo stockInfo;
 	
