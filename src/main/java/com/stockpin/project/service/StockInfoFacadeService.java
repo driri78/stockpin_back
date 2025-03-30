@@ -1,19 +1,18 @@
-package com.stockpin.project.service.component;
+package com.stockpin.project.service;
 
 import java.util.Map;
 
 import org.springframework.stereotype.Service;
 
 import com.stockpin.project.dto.stock.info.StockInfoDTO;
-import com.stockpin.project.service.module.ExternalStockInfoService;
-import com.stockpin.project.service.module.ExternalStockPriceService;
+import com.stockpin.project.service.kis.ExternalStockInfoService;
 
 import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Mono;
 
 @Service
 @RequiredArgsConstructor
-public class StockInfoService {
+public class StockInfoFacadeService {
 	
 	private final ExternalStockInfoService externalStockInfoService;
 	

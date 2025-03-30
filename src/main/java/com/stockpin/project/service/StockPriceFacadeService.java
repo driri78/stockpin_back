@@ -1,4 +1,4 @@
-package com.stockpin.project.service.component;
+package com.stockpin.project.service;
 
 import java.util.List;
 import java.util.Map;
@@ -12,7 +12,7 @@ import com.stockpin.project.dto.stock.price.ScreenerDTO;
 import com.stockpin.project.dto.stock.price.StockPriceDTO;
 import com.stockpin.project.dto.stock.price.TradeAmountDTO;
 import com.stockpin.project.dto.stock.price.VolumeDTO;
-import com.stockpin.project.service.module.ExternalStockPriceService;
+import com.stockpin.project.service.kis.ExternalStockPriceService;
 import com.stockpin.project.util.Converter;
 import com.stockpin.project.util.Fomatter;
 
@@ -21,7 +21,7 @@ import reactor.core.publisher.Mono;
 
 @Service
 @RequiredArgsConstructor
-public class StockPriceService {
+public class StockPriceFacadeService {
 	private final ExternalStockPriceService externalStockPriceService;
 	
 	/*seq 
@@ -35,7 +35,7 @@ public class StockPriceService {
       7 : "저평가 탈출주" : 5봉기간동안 종가 신고가 갱신, PER 최근분기 기준 0배이상 10배 이하, PBR 최근분기 기준 0배이상 1.5배 이하
 	 */
 	
-	// 거래대금 상위 100 => 홈
+	// 홈 => 거래대금 상위 100
     public Mono<List<StockPriceDTO<TradeAmountDTO>>> getTopRankedByTradeAmount(){
     	return externalStockPriceService.getStockList("0").flatMap(response -> {
 			List<Map<String, String>> stockList = Converter.convertTolistOfMap(response.get("output2"));
@@ -57,7 +57,7 @@ public class StockPriceService {
 		});
     }
 	
-	// 거래량 상위 100 => 홈
+	// 홈 => 거래량 상위 100
 	public Mono<List<StockPriceDTO<VolumeDTO>>> getTopRankedByVolume(){
 		return externalStockPriceService.getStockList("1").flatMap(response -> {
 			List<Map<String, String>> stockList = Converter.convertTolistOfMap(response.get("output2"));
@@ -79,7 +79,7 @@ public class StockPriceService {
 		});
 	}
 	
-	// Screener StockList => 주식모아보기
+	// 주식모아보기 => Screener StockList
 	public Mono<List<StockPriceDTO<ScreenerDTO>>> getScreenerStock(String idx){
 		if(Fomatter.parseInt(idx) < 2 || Fomatter.parseInt(idx) > 8) {
 			throw new RuntimeException("잘못된 idx값입니다...");
@@ -105,7 +105,7 @@ public class StockPriceService {
 		});
 	}
 	
-	// detail 시세
+	// detail => 시세
 	public Mono<List<QuoteDaily>> getStockQuote(String startDate, String endDate, String period){
 		return externalStockPriceService.getQuote(startDate, endDate, period).flatMap(response -> {
 			List<Map<String, String>> stockList = Converter.convertTolistOfMap(response.get("output2"));

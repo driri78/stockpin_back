@@ -1,4 +1,4 @@
-package com.stockpin.project.service.component;
+package com.stockpin.project.service;
 
 import java.util.List;
 import java.util.Map;
@@ -8,14 +8,14 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 
 import com.stockpin.project.dto.index.IndexPriceDTO;
-import com.stockpin.project.service.module.ExternalIndexService;
+import com.stockpin.project.service.kis.ExternalIndexService;
 
 import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Mono;
 
 @Service
 @RequiredArgsConstructor
-public class IndexService {
+public class IndexFacadeService {
 
 	private final ExternalIndexService externalIndexService;
 	

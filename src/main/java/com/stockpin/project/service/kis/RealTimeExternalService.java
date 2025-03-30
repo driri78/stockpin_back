@@ -1,4 +1,4 @@
-package com.stockpin.project.service.module;
+package com.stockpin.project.service.kis;
 
 import org.springframework.stereotype.Service;
 

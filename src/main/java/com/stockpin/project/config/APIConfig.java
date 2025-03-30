@@ -10,7 +10,7 @@ import lombok.Setter;
 @Component
 @Getter
 @Setter
-@ConfigurationProperties(prefix = "api")
+@ConfigurationProperties(prefix = "api.stock")
 public class APIConfig {
 	private String appkey;
 	private String appsecret;

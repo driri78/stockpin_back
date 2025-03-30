@@ -16,8 +16,8 @@ import com.stockpin.project.dto.stock.price.ScreenerDTO;
 import com.stockpin.project.dto.stock.price.StockPriceDTO;
 import com.stockpin.project.dto.stock.price.TradeAmountDTO;
 import com.stockpin.project.dto.stock.price.VolumeDTO;
-import com.stockpin.project.service.component.StockPriceService;
-import com.stockpin.project.service.module.ExternalStockPriceService;
+import com.stockpin.project.service.StockPriceFacadeService;
+import com.stockpin.project.service.kis.ExternalStockPriceService;
 
 import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Mono;
@@ -27,7 +27,7 @@ import reactor.core.publisher.Mono;
 @RequestMapping("/api/stock/price")
 public class StockPriceAPIController {
 
-	private final StockPriceService stockPriceService;
+	private final StockPriceFacadeService stockPriceService;
 	
 	private final ExternalStockPriceService externalApiService;
 	
@@ -62,5 +62,4 @@ public class StockPriceAPIController {
 		return stockPriceService.getStockQuote(String.valueOf(LocalDateTime.now().minusDays(100).format(DateTimeFormatter.ofPattern("YYYYMMdd"))), 
 				  String.valueOf(LocalDateTime.now().format(DateTimeFormatter.ofPattern("YYYYMMdd"))), period);
 	}
-	
 }

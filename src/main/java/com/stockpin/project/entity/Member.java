@@ -27,6 +27,7 @@ public class Member {
 	private String name;
 	private String fullName;
 	private String phone;
+	private String birth;
 	
 	@OneToOne
 	@JoinColumn(name="trading_account_id", unique = true)

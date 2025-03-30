@@ -8,8 +8,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.stockpin.project.dto.index.IndexPriceDTO;
-import com.stockpin.project.service.component.IndexService;
-import com.stockpin.project.service.module.ExternalIndexService;
+import com.stockpin.project.service.IndexFacadeService;
+import com.stockpin.project.service.kis.ExternalIndexService;
 
 import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Mono;
@@ -19,7 +19,7 @@ import reactor.core.publisher.Mono;
 @RequestMapping("/api/index")
 public class IndexAPIController {
 	
-	private final IndexService indexService;
+	private final IndexFacadeService indexService;
 	
 	@GetMapping("test")
 	public Mono<List<IndexPriceDTO>> getIndex() {
