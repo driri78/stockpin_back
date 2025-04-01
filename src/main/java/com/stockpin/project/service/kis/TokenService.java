@@ -13,7 +13,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import com.stockpin.project.config.APIConfig;
-import com.stockpin.project.dto.TokenRequestDTO;
+import com.stockpin.project.dto.ksitoken.TokenRequestDTO;
+import com.stockpin.project.dto.ksitoken.TokenResponseDTO;
 
 import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Mono;
@@ -65,21 +66,20 @@ public class TokenService {
 			     .retrieve()
 			     .onStatus(HttpStatusCode::is4xxClientError,
                           response -> response.bodyToMono(Map.class)
-                                             .flatMap(error -> {
+                                              .flatMap(error -> {
                                             	 if(error.get("error_code").equals("EGW00133")) {
                                             		 System.out.println(error.get("error_description"));
                                             	 }
                                             	 return Mono.error(new RuntimeException("Client error occurred"));
                                              }))
-			     .bodyToMono(new ParameterizedTypeReference<Map<String,String>>() {})
-			     .onErrorResume(e -> Mono.error(new RuntimeException("ERR : getApiToken")))
+			     .bodyToMono(TokenResponseDTO.class)
 			     .map(response -> {
 			    	 ValueOperations<String, String> valueOperations = redisTemplate.opsForValue();
-			    	 valueOperations.set("access_token", response.get("access_token"));
-					 valueOperations.set("token_type", response.get("token_type"));
-					 valueOperations.set("expires_in", response.get("expires_in"));
-					 valueOperations.set("access_token_token_expired", response.get("access_token_token_expired"));
-			    	 return response.get("access_token");
+			    	 valueOperations.set("access_token", response.getAccessToken());
+					 valueOperations.set("token_type", response.getTokenType());
+					 valueOperations.set("expires_in", String.valueOf(response.getExpiresIn()));
+					 valueOperations.set("access_token_token_expired", response.getAcessTokenTokenExpired());
+			    	 return response.getAccessToken();
 				   });
 	}
 	

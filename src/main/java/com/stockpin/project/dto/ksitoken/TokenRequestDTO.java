@@ -1,4 +1,4 @@
-package com.stockpin.project.dto;
+package com.stockpin.project.dto.ksitoken;
 
 import lombok.Builder;
 import lombok.Getter;
