@@ -25,8 +25,6 @@ public class TokenService {
 	private final RedisTemplate<String, String> redisTemplate;
 	
 	private final APIConfig apiConfig;
-
-	String URL = "https://openapi.koreainvestment.com:9443";
 	
 	// Redis에서 token값 get
 	public Mono<String> getToken(){
@@ -55,7 +53,7 @@ public class TokenService {
 	// open api로 토큰 발급
 	private Mono<String> getApiToken() {
 		WebClient webClient = WebClient.builder()
-									   .baseUrl(URL)
+									   .baseUrl(apiConfig.getUrl())
 									   .build();
 		TokenRequestDTO requestData = new TokenRequestDTO(apiConfig.getAppkey(), 
 				  										  apiConfig.getAppsecret());
@@ -64,28 +62,20 @@ public class TokenService {
 			     .contentType(MediaType.APPLICATION_JSON)
 			     .bodyValue(requestData)
 			     .retrieve()
-			     .onStatus(HttpStatusCode::is4xxClientError,
-                          response -> response.bodyToMono(Map.class)
-                                              .flatMap(error -> {
-                                            	 if(error.get("error_code").equals("EGW00133")) {
-                                            		 System.out.println(error.get("error_description"));
-                                            	 }
-                                            	 return Mono.error(new RuntimeException("Client error occurred"));
-                                             }))
 			     .bodyToMono(TokenResponseDTO.class)
 			     .map(response -> {
 			    	 ValueOperations<String, String> valueOperations = redisTemplate.opsForValue();
 			    	 valueOperations.set("access_token", response.getAccessToken());
 					 valueOperations.set("token_type", response.getTokenType());
 					 valueOperations.set("expires_in", String.valueOf(response.getExpiresIn()));
-					 valueOperations.set("access_token_token_expired", response.getAcessTokenTokenExpired());
+					 valueOperations.set("access_token_token_expired", response.getAccessTokenTokenExpired());
 			    	 return response.getAccessToken();
 				   });
 	}
 	
 	public Mono<String> getWebSocketApiToken() {
 		WebClient webClient = WebClient.builder()
-									   .baseUrl(URL)
+									   .baseUrl(apiConfig.getUrl())
 									   .build();
 		TokenRequestDTO requestData = new TokenRequestDTO(apiConfig.getAppkey(), 
 				  										  apiConfig.getAppsecret());
