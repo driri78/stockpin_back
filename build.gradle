@@ -35,8 +35,7 @@ dependencies {
 	// dirver는 application에 따로 추가해야함
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	
-	// security
-	//implementation 'org.springframework.boot:spring-boot-starter-security'
+	
 
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'
@@ -45,6 +44,9 @@ dependencies {
 	// webFlux => WebClient
 	implementation 'org.springframework.boot:spring-boot-starter-webflux'
 	//implementation 'org.springframework.boot:spring-boot-starter-web'
+	
+	// security
+    implementation 'org.springframework.boot:spring-boot-starter-security'
 	
 	// Redis
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'

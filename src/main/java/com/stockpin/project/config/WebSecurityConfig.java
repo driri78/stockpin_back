@@ -1,25 +1,26 @@
-//package com.stockpin.project.config;
-//
-//
-//import org.springframework.context.annotation.Bean;
-//import org.springframework.context.annotation.Configuration;
-//import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-//import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-//import org.springframework.security.web.SecurityFilterChain;
-//
-//import lombok.RequiredArgsConstructor;
-//
-//@EnableWebSecurity
-//@Configuration
-//@RequiredArgsConstructor
-//public class WebSecurityConfig {
-//	
-//	@Bean
-//	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
-//		http.authorizeHttpRequests(authorizeRequest -> 
-//			authorizeRequest.anyRequest().permitAll()
-//		);
-//		return http.build();
-//	}
-//
-//}
+package com.stockpin.project.config;
+
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
+import org.springframework.security.config.web.server.ServerHttpSecurity;
+import org.springframework.security.web.server.SecurityWebFilterChain;
+
+import lombok.RequiredArgsConstructor;
+
+@EnableWebFluxSecurity
+@Configuration
+@RequiredArgsConstructor
+public class WebSecurityConfig {
+	
+	@Bean
+	public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http) {
+		return http.authorizeExchange(exchange -> 
+			exchange
+				.pathMatchers("/api/**").permitAll()
+				.anyExchange().authenticated()
+		).build();
+	}
+
+}
